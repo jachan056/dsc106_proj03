@@ -4,251 +4,395 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CMIP6 Global Temperature Over Time</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
+    :root {
+      --forest:   #1b3a2d;
+      --moss:     #2d5a3d;
+      --fern:     #3d7a52;
+      --sage:     #6aab7e;
+      --mist:     #b8d9c2;
+      --cream:    #f5f0e8;
+      --sand:     #e8dfc8;
+      --bark:     #7a5c3a;
+      --ember:    #c4622d;
+      --sky:      #4a7fa5;
+      --text:     #1c2b22;
+      --text-mid: #3d5247;
+      --text-soft:#6b8070;
+    }
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: Arial, sans-serif;
-      background: #f4f6f9;
-      color: #222;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--text);
       min-height: 100vh;
     }
 
     header {
-      background: #1a1a2e;
-      color: #fff;
-      padding: 48px 24px 40px;
+      position: relative;
+      background: var(--forest);
+      overflow: hidden;
+      padding: 72px 24px 56px;
       text-align: center;
     }
 
-    header .tag {
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 80% at 15% 120%, #2d5a3d88 0%, transparent 60%),
+        radial-gradient(ellipse 50% 60% at 90% -10%, #3d7a5244 0%, transparent 55%),
+        radial-gradient(ellipse 80% 40% at 50% 110%, #1b3a2d 0%, transparent 50%);
+    }
+
+    header::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: repeating-linear-gradient(
+        118deg,
+        transparent,
+        transparent 60px,
+        rgba(255,255,255,0.018) 60px,
+        rgba(255,255,255,0.018) 61px
+      );
+    }
+
+    header > * { position: relative; z-index: 1; }
+
+    .tag {
       display: inline-block;
-      background: rgba(255,255,255,0.12);
-      color: #a8c8f0;
-      font-size: 12px;
-      letter-spacing: 0.08em;
+      background: rgba(106,171,126,0.18);
+      color: var(--sage);
+      border: 1px solid rgba(106,171,126,0.35);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      padding: 4px 12px;
+      padding: 5px 14px;
       border-radius: 20px;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
 
     header h1 {
-      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(2rem, 5vw, 3.2rem);
       font-weight: 700;
-      line-height: 1.2;
-      margin-bottom: 16px;
+      line-height: 1.15;
+      color: var(--cream);
+      margin-bottom: 20px;
+      letter-spacing: -0.01em;
     }
 
-    header h1 span {
-      color: #e05c3a;
+    header h1 em {
+      font-style: italic;
+      color: var(--sage);
     }
 
     header p {
       font-size: 1rem;
-      color: #b0bcd0;
-      max-width: 600px;
+      color: var(--mist);
+      max-width: 560px;
       margin: 0 auto;
-      line-height: 1.7;
+      line-height: 1.75;
+      font-weight: 300;
+    }
+
+    .leaf-divider {
+      display: block;
+      width: 100%;
+      margin-top: -1px;
+      line-height: 0;
     }
 
     .meta-bar {
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
-      gap: 24px;
-      background: #111827;
-      padding: 14px 24px;
-      font-size: 13px;
-      color: #9aa5b4;
+      background: var(--moss);
     }
 
-    .meta-bar span strong {
-      color: #e2e8f0;
+    .meta-item {
+      padding: 13px 24px;
+      font-size: 12.5px;
+      color: var(--mist);
+      border-right: 1px solid rgba(255,255,255,0.08);
+      letter-spacing: 0.01em;
     }
+
+    .meta-item:last-child { border-right: none; }
+    .meta-item strong { color: var(--cream); font-weight: 500; }
 
     main {
-      max-width: 900px;
+      max-width: 920px;
       margin: 0 auto;
-      padding: 48px 24px 80px;
+      padding: 56px 24px 80px;
     }
 
-    .section-title {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 10.5px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: #888;
-      margin-bottom: 20px;
+      color: var(--fern);
+      margin-bottom: 22px;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, var(--fern), transparent);
+      opacity: 0.3;
     }
 
     .cards {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-      margin-bottom: 48px;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 14px;
+      margin-bottom: 52px;
     }
 
     .card {
       background: #fff;
-      border-radius: 12px;
-      padding: 20px;
-      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 22px 20px;
+      border: 1px solid rgba(61,122,82,0.14);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(27,58,45,0.1);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--fern), var(--sage));
+      opacity: 0.55;
+    }
+
+    .card.accent::before {
+      background: linear-gradient(90deg, var(--ember), #e8924a);
+      opacity: 0.85;
     }
 
     .card .label {
-      font-size: 12px;
-      color: #888;
-      margin-bottom: 8px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      margin-bottom: 10px;
     }
 
     .card .value {
-      font-size: 1.6rem;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.75rem;
       font-weight: 700;
-      color: #1a1a2e;
+      color: var(--forest);
+      line-height: 1;
     }
+
+    .card.accent .value { color: var(--ember); }
 
     .card .sub {
       font-size: 12px;
-      color: #aaa;
-      margin-top: 4px;
-    }
-
-    .card.highlight .value {
-      color: #e05c3a;
+      color: var(--text-soft);
+      margin-top: 6px;
     }
 
     .info-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 20px;
-      margin-bottom: 48px;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-bottom: 52px;
     }
 
     .info-block {
       background: #fff;
-      border-radius: 12px;
+      border-radius: 14px;
       padding: 24px;
-      border: 1px solid #e2e8f0;
+      border: 1px solid rgba(61,122,82,0.14);
+    }
+
+    .info-block .icon {
+      font-size: 22px;
+      margin-bottom: 12px;
+      display: block;
     }
 
     .info-block h3 {
-      font-size: 14px;
-      font-weight: 600;
+      font-family: 'Playfair Display', serif;
+      font-size: 15px;
+      font-weight: 700;
       margin-bottom: 10px;
-      color: #1a1a2e;
+      color: var(--forest);
     }
 
     .info-block p {
-      font-size: 14px;
-      color: #555;
-      line-height: 1.7;
+      font-size: 13.5px;
+      color: var(--text-mid);
+      line-height: 1.75;
     }
 
     .regions {
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      margin-bottom: 48px;
+      gap: 8px;
+      margin-bottom: 52px;
     }
 
     .region-row {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
       background: #fff;
-      border-radius: 8px;
-      padding: 12px 16px;
-      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 14px 18px;
+      border: 1px solid rgba(61,122,82,0.12);
       font-size: 14px;
+      transition: background 0.15s;
     }
 
-    .region-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
+    .region-row:hover { background: #f6faf7; }
+
+    .region-swatch {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
       flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
     }
 
     .region-name {
       flex: 1;
-      color: #333;
+      color: var(--text);
+      font-weight: 500;
     }
 
     .region-lat {
-      color: #999;
-      font-size: 12px;
+      color: var(--text-soft);
+      font-size: 12.5px;
+      font-weight: 300;
     }
 
     .download-section {
-      background: #1a1a2e;
-      border-radius: 12px;
-      padding: 32px;
+      position: relative;
+      background: var(--forest);
+      border-radius: 16px;
+      padding: 40px 36px;
       text-align: center;
       color: #fff;
+      overflow: hidden;
     }
 
+    .download-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 100% at 10% 50%, rgba(61,122,82,0.4) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 90% 20%, rgba(106,171,126,0.15) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .download-section > * { position: relative; }
+
     .download-section h3 {
-      font-size: 1.1rem;
-      font-weight: 600;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
       margin-bottom: 8px;
+      color: var(--cream);
     }
 
     .download-section p {
-      font-size: 14px;
-      color: #9aa5b4;
-      margin-bottom: 20px;
+      font-size: 13.5px;
+      color: var(--mist);
+      margin-bottom: 24px;
+      font-weight: 300;
     }
 
     .download-section a {
       display: inline-block;
-      background: #e05c3a;
-      color: #fff;
+      background: var(--sage);
+      color: var(--forest);
       text-decoration: none;
-      padding: 10px 28px;
-      border-radius: 8px;
-      font-size: 14px;
+      padding: 11px 32px;
+      border-radius: 30px;
+      font-size: 13.5px;
       font-weight: 600;
+      letter-spacing: 0.02em;
+      transition: background 0.2s, transform 0.15s;
     }
 
     .download-section a:hover {
-      background: #c94d2e;
+      background: var(--mist);
+      transform: scale(1.03);
     }
 
     footer {
       text-align: center;
-      padding: 24px;
+      padding: 28px 24px;
       font-size: 12px;
-      color: #aaa;
-      border-top: 1px solid #e2e8f0;
+      color: var(--text-soft);
+      border-top: 1px solid rgba(61,122,82,0.15);
     }
 
-    footer a {
-      color: #6b8ec7;
-      text-decoration: none;
+    footer a { color: var(--fern); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
+
+    header .tag { animation: fadeUp 0.7s ease 0.05s both; }
+    header h1   { animation: fadeUp 0.7s ease 0.15s both; }
+    header p    { animation: fadeUp 0.7s ease 0.25s both; }
   </style>
 </head>
 <body>
 
 <header>
   <div class="tag">DSC 106 — Data Visualization</div>
-  <h1>CMIP6 Global <span>Temperature Over Time</span></h1>
+  <h1>CMIP6 Global<br><em>Temperature Over Time</em></h1>
   <p>
-    Projected temperatures of Earth from years 1850 to 2100, using data from NCAR CESM2 that is under SSPS-8.5 high-emissions scenario.
+    Projected temperatures of Earth from 1850 to 2100, using NCAR CESM2
+    data under the SSP5-8.5 high-emissions scenario.
   </p>
 </header>
 
+<svg class="leaf-divider" viewBox="0 0 1440 48" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+  <path d="M0,0 C240,48 480,0 720,24 C960,48 1200,8 1440,32 L1440,0 Z" fill="#1b3a2d"/>
+</svg>
+
 <div class="meta-bar">
-  <span><strong>Variable</strong>: Surface Air Temperature (tas)</span>
-  <span><strong>Scenario</strong>: SSP5-8.5</span>
-  <span><strong>Period</strong>: 1850 – 2100</span>
-  <span><strong>Sampled</strong>: Every 5 years</span>
+  <div class="meta-item"><strong>Variable</strong>: Surface Air Temp (tas)</div>
+  <div class="meta-item"><strong>Scenario</strong>: SSP5-8.5</div>
+  <div class="meta-item"><strong>Period</strong>: 1850 – 2100</div>
+  <div class="meta-item"><strong>Sampled</strong>: Every 5 years</div>
 </div>
 
 <main>
 
-  <p class="section-title">Dataset summary</p>
+  <p class="section-label">Dataset summary</p>
   <div class="cards">
     <div class="card">
       <div class="label">Year range</div>
@@ -260,67 +404,68 @@
       <div class="value">5 yrs</div>
       <div class="sub">Every 5th year taken</div>
     </div>
-    <div class="card highlight">
+    <div class="card accent">
       <div class="label">Emissions scenario</div>
       <div class="value">SSP5-8.5</div>
       <div class="sub">High-emissions pathway</div>
     </div>
+    <div class="card accent">
+      <div class="label">Baseline period</div>
+      <div class="value">1850–1900</div>
+      <div class="sub">Pre-industrial reference</div>
+    </div>
   </div>
 
-  <p class="section-title">About the data</p>
+  <p class="section-label">About the data</p>
   <div class="info-grid">
     <div class="info-block">
+      <span class="icon">🌐</span>
       <h3>What is CMIP6?</h3>
-      <p>
-        The Coupled Model Intercomparison Project Phase 6 is a coordinated international effort to simulate past and future climates using numerous models. This project utlizes CESM2 from NCAR.
-      </p>
+      <p>The Coupled Model Intercomparison Project Phase 6 is a coordinated international effort to simulate past and future climates using numerous models. This project utilizes CESM2 from NCAR.</p>
     </div>
     <div class="info-block">
+      <span class="icon">🏭</span>
       <h3>What is SSP5-8.5?</h3>
-      <p>
-        SSP5-8.5 is a high-emissions scenario where radiative forcing is projected to reach 8.5 W/m² by 2100. It is representative of a world where fossil fuels are heavily relied on with little to none climate policies.
-      </p>
+      <p>SSP5-8.5 is a high-emissions scenario where radiative forcing is projected to reach 8.5 W/m² by 2100 — representative of a world heavily reliant on fossil fuels with little climate policy.</p>
     </div>
     <div class="info-block">
+      <span class="icon">🌡️</span>
       <h3>Temperature Changes</h3>
-      <p>
-        Each value shows how much warmer or cooler a location is relative to its average during 1850–1900 (pre-industrial). Positive values indicate warming above the pre-industrial temperatures.
-      </p>
+      <p>Each value shows how much warmer or cooler a location is relative to its average during 1850–1900 (pre-industrial). Positive values indicate warming above baseline.</p>
     </div>
     <div class="info-block">
-      <h3>Data pipeline</h3>
-      <p>
-        Raw zarr data was loaded via Google Cloud, converted from Kelvin to Celsius, averaged annually, and sampled every 5 years. Regions were assigned by latitude threshold.
-      </p>
+      <span class="icon">⚙️</span>
+      <h3>Data Pipeline</h3>
+      <p>Raw zarr data was loaded via Google Cloud, converted from Kelvin to Celsius, averaged annually, and sampled every 5 years. Regions were assigned by latitude threshold.</p>
     </div>
   </div>
 
-  <p class="section-title">Regions in the dataset</p>
+  <p class="section-label">Regions in the dataset</p>
   <div class="regions">
     <div class="region-row">
-      <div class="region-dot" style="background:#4a90d9;"></div>
+      <div class="region-swatch" style="background:#ddeef8;">🧊</div>
       <span class="region-name">Arctic / High North</span>
-      <span class="region-lat">Latitude above 60° (including 60)</span>
+      <span class="region-lat">Latitude above 60° (including 60°)</span>
     </div>
     <div class="region-row">
-      <div class="region-dot" style="background:#7b6ccf;"></div>
+      <div class="region-swatch" style="background:#e8e4f5;">🏔️</div>
       <span class="region-name">Northern Mid-Latitudes</span>
-      <span class="region-lat">Latitude between 30° and 60° (not including 60)</span>
+      <span class="region-lat">Latitude between 30° and 60° (not including 60°)</span>
     </div>
     <div class="region-row">
-      <div class="region-dot" style="background:#e0913a;"></div>
+      <div class="region-swatch" style="background:#e6f4eb;">🌿</div>
       <span class="region-name">Tropics</span>
-      <span class="region-lat">Latitude between -30° and 30° (not including 30 and -30)</span>
+      <span class="region-lat">Latitude between −30° and 30° (not including ±30°)</span>
     </div>
     <div class="region-row">
-      <div class="region-dot" style="background:#4caf8a;"></div>
+      <div class="region-swatch" style="background:#e9f5ef;">🌲</div>
       <span class="region-name">Southern Mid-Latitudes</span>
-      <span class="region-lat">Latitude between -60° and 30° (not including -60)</span>
+      <span class="region-lat">Latitude between −60° and −30° (not including −60°)</span>
     </div>
     <div class="region-row">
-      <div class="region-dot" style="background:#b0c4de;"></div>
+      <div class="region-swatch" style="background:#eef4f8;">❄️</div>
       <span class="region-name">Antarctic / High South</span>
-      <span class="region-lat">Latitude below -60° (including -60)</span>
+      <span class="region-lat">Latitude below −60° (including −60°)</span>
     </div>
   </div>
 
