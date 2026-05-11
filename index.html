@@ -1,382 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CMIP6 Global Temperature Over Time</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
-  <style>
-    :root {
-      --forest:   #1b3a2d;
-      --moss:     #2d5a3d;
-      --fern:     #3d7a52;
-      --sage:     #6aab7e;
-      --mist:     #b8d9c2;
-      --cream:    #f5f0e8;
-      --sand:     #e8dfc8;
-      --bark:     #7a5c3a;
-      --ember:    #c4622d;
-      --sky:      #4a7fa5;
-      --text:     #1c2b22;
-      --text-mid: #3d5247;
-      --text-soft:#6b8070;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CMIP6 Global Temperature Over Time</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --forest: #1b3a2d;
+  --moss: #2d5a3d;
+  --fern: #3d7a52;
+  --sage: #6aab7e;
+  --mist: #b8d9c2;
+  --cream: #f5f0e8;
+  --sand: #e8dfc8;
+  --bark: #7a5c3a;
+  --ember: #c4622d;
+  --sky: #4a7fa5;
+  --text: #1c2b22;
+  --text-mid: #3d5247;
+  --text-soft: #6b8070;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* HEADER */
+header { position: relative; background: var(--forest); overflow: hidden; padding: 72px 24px 56px; text-align: center; }
+header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 60% 80% at 15% 120%, #2d5a3d88 0%, transparent 60%), radial-gradient(ellipse 50% 60% at 90% -10%, #3d7a5244 0%, transparent 55%), radial-gradient(ellipse 80% 40% at 50% 110%, #1b3a2d 0%, transparent 50%); }
+header::after { content: ''; position: absolute; inset: 0; background-image: repeating-linear-gradient(118deg, transparent, transparent 60px, rgba(255,255,255,0.018) 60px, rgba(255,255,255,0.018) 61px); }
+header > * { position: relative; z-index: 1; }
+.tag { display: inline-block; background: rgba(106,171,126,0.18); color: var(--sage); border: 1px solid rgba(106,171,126,0.35); font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; padding: 5px 14px; border-radius: 20px; margin-bottom: 24px; }
+header h1 { font-family: 'Playfair Display', Georgia, serif; font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 700; line-height: 1.15; color: var(--cream); margin-bottom: 20px; letter-spacing: -0.01em; }
+header h1 em { font-style: italic; color: var(--sage); }
+header p { font-size: 1rem; color: var(--mist); max-width: 560px; margin: 0 auto; line-height: 1.75; font-weight: 300; }
+.leaf-divider { display: block; width: 100%; margin-top: -1px; line-height: 0; }
+.meta-bar { display: flex; justify-content: center; flex-wrap: wrap; background: var(--moss); }
+.meta-item { padding: 13px 24px; font-size: 12.5px; color: var(--mist); border-right: 1px solid rgba(255,255,255,0.08); letter-spacing: 0.01em; }
+.meta-item:last-child { border-right: none; }
+.meta-item strong { color: var(--cream); font-weight: 500; }
 
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--cream);
-      color: var(--text);
-      min-height: 100vh;
-    }
+/* MAIN */
+main { max-width: 960px; margin: 0 auto; padding: 56px 24px 80px; }
+.section-label { display: flex; align-items: center; gap: 10px; font-size: 10.5px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--fern); margin-bottom: 22px; }
+.section-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(to right, var(--fern), transparent); opacity: 0.3; }
 
-    header {
-      position: relative;
-      background: var(--forest);
-      overflow: hidden;
-      padding: 72px 24px 56px;
-      text-align: center;
-    }
+/* MAP WRAPPER */
+.map-wrapper { background: #fff; border-radius: 18px; border: 1px solid rgba(61,122,82,0.14); overflow: hidden; margin-bottom: 52px; box-shadow: 0 4px 24px rgba(27,58,45,0.07); }
+.map-header { padding: 22px 28px 16px; border-bottom: 1px solid rgba(61,122,82,0.1); display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+.map-header h2 { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 700; color: var(--forest); }
+.map-header p { font-size: 12.5px; color: var(--text-soft); font-weight: 300; }
+.map-body { padding: 20px 28px 28px; }
 
-    header::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(ellipse 60% 80% at 15% 120%, #2d5a3d88 0%, transparent 60%),
-        radial-gradient(ellipse 50% 60% at 90% -10%, #3d7a5244 0%, transparent 55%),
-        radial-gradient(ellipse 80% 40% at 50% 110%, #1b3a2d 0%, transparent 50%);
-    }
+/* SLIDER */
+.slider-row { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; flex-wrap: wrap; }
+.year-display { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: var(--forest); min-width: 80px; line-height: 1; }
+.year-display span { display: block; font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-soft); margin-bottom: 2px; }
+.slider-track { flex: 1; min-width: 200px; }
+.slider-track input[type=range] { width: 100%; -webkit-appearance: none; appearance: none; height: 4px; border-radius: 2px; background: linear-gradient(to right, var(--fern) 0%, var(--fern) var(--pct, 0%), var(--sand) var(--pct, 0%), var(--sand) 100%); outline: none; cursor: pointer; }
+.slider-track input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--forest); border: 2px solid var(--sage); cursor: pointer; transition: transform 0.15s; }
+.slider-track input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+.slider-labels { display: flex; justify-content: space-between; font-size: 10.5px; color: var(--text-soft); margin-top: 4px; }
+.play-btn { background: var(--forest); color: var(--cream); border: none; border-radius: 50%; width: 36px; height: 36px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; transition: background 0.2s, transform 0.15s; }
+.play-btn:hover { background: var(--fern); transform: scale(1.05); }
 
-    header::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: repeating-linear-gradient(
-        118deg,
-        transparent,
-        transparent 60px,
-        rgba(255,255,255,0.018) 60px,
-        rgba(255,255,255,0.018) 61px
-      );
-    }
+/* SVG MAP */
+#map-svg { width: 100%; height: auto; display: block; border-radius: 10px; }
+.graticule { fill: none; stroke: rgba(255,255,255,0.2); stroke-width: 0.4; }
+.land-outline { fill: none; stroke: rgba(255,255,255,0.5); stroke-width: 0.6; }
+.country-borders { fill: none; stroke: rgba(255,255,255,0.22); stroke-width: 0.3; }
+.globe-sphere { fill: #c8dfe8; }
 
-    header > * { position: relative; z-index: 1; }
+/* TOOLTIP */
+#map-tooltip { position: fixed; pointer-events: none; background: var(--forest); color: var(--cream); padding: 9px 14px; border-radius: 9px; font-size: 12.5px; line-height: 1.6; z-index: 1000; opacity: 0; transition: opacity 0.15s; max-width: 180px; box-shadow: 0 4px 16px rgba(0,0,0,0.25); }
+#map-tooltip.visible { opacity: 1; }
+.tt-temp { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; }
+.tt-pos { color: var(--mist); font-size: 11px; }
 
-    .tag {
-      display: inline-block;
-      background: rgba(106,171,126,0.18);
-      color: var(--sage);
-      border: 1px solid rgba(106,171,126,0.35);
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      padding: 5px 14px;
-      border-radius: 20px;
-      margin-bottom: 24px;
-    }
+/* LEGEND */
+.legend-row { display: flex; align-items: center; gap: 12px; margin-top: 14px; flex-wrap: wrap; }
+.legend-label { font-size: 11.5px; color: var(--text-soft); white-space: nowrap; }
+#legend-svg { flex: 1; min-width: 200px; max-width: 420px; height: 28px; }
 
-    header h1 {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: clamp(2rem, 5vw, 3.2rem);
-      font-weight: 700;
-      line-height: 1.15;
-      color: var(--cream);
-      margin-bottom: 20px;
-      letter-spacing: -0.01em;
-    }
+/* STATS BAR */
+.stats-bar { display: flex; gap: 0; background: var(--cream); border-radius: 10px; border: 1px solid rgba(61,122,82,0.12); overflow: hidden; margin-top: 16px; }
+.stat-item { flex: 1; padding: 10px 16px; border-right: 1px solid rgba(61,122,82,0.1); text-align: center; }
+.stat-item:last-child { border-right: none; }
+.s-label { font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-soft); margin-bottom: 3px; }
+.s-value { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; color: var(--forest); }
+.s-value.warm { color: #b34a1a; }
+.s-value.cool { color: var(--sky); }
 
-    header h1 em {
-      font-style: italic;
-      color: var(--sage);
-    }
+/* INFO CARDS */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin-bottom: 52px; }
+.card { background: #fff; border-radius: 14px; padding: 22px 20px; border: 1px solid rgba(61,122,82,0.14); position: relative; overflow: hidden; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(27,58,45,0.1); }
+.card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--fern), var(--sage)); opacity: 0.55; }
+.card.accent::before { background: linear-gradient(90deg, var(--ember), #e8924a); opacity: 0.85; }
+.card .label { font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-soft); margin-bottom: 10px; }
+.card .value { font-family: 'Playfair Display', serif; font-size: 1.75rem; font-weight: 700; color: var(--forest); line-height: 1; }
+.card.accent .value { color: var(--ember); }
+.card .sub { font-size: 12px; color: var(--text-soft); margin-top: 6px; }
 
-    header p {
-      font-size: 1rem;
-      color: var(--mist);
-      max-width: 560px;
-      margin: 0 auto;
-      line-height: 1.75;
-      font-weight: 300;
-    }
+/* INFO BLOCKS */
+.info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 52px; }
+.info-block { background: #fff; border-radius: 14px; padding: 24px; border: 1px solid rgba(61,122,82,0.14); }
+.info-block .icon { font-size: 22px; margin-bottom: 12px; display: block; }
+.info-block h3 { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; margin-bottom: 10px; color: var(--forest); }
+.info-block p { font-size: 13.5px; color: var(--text-mid); line-height: 1.75; }
 
-    .leaf-divider {
-      display: block;
-      width: 100%;
-      margin-top: -1px;
-      line-height: 0;
-    }
+/* REGIONS */
+.regions { display: flex; flex-direction: column; gap: 8px; margin-bottom: 52px; }
+.region-row { display: flex; align-items: center; gap: 14px; background: #fff; border-radius: 10px; padding: 14px 18px; border: 1px solid rgba(61,122,82,0.12); font-size: 14px; transition: background 0.15s; }
+.region-row:hover { background: #f6faf7; }
+.region-swatch { width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+.region-name { flex: 1; color: var(--text); font-weight: 500; }
+.region-lat { color: var(--text-soft); font-size: 12.5px; font-weight: 300; }
 
-    .meta-bar {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      background: var(--moss);
-    }
+/* LOADING */
+.map-loading { display: flex; align-items: center; justify-content: center; height: 320px; color: var(--text-soft); font-size: 13px; gap: 10px; }
+.spinner { width: 20px; height: 20px; border: 2px solid var(--sand); border-top-color: var(--fern); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-    .meta-item {
-      padding: 13px 24px;
-      font-size: 12.5px;
-      color: var(--mist);
-      border-right: 1px solid rgba(255,255,255,0.08);
-      letter-spacing: 0.01em;
-    }
+footer { text-align: center; padding: 28px 24px; font-size: 12px; color: var(--text-soft); border-top: 1px solid rgba(61,122,82,0.15); }
+footer a { color: var(--fern); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
 
-    .meta-item:last-child { border-right: none; }
-    .meta-item strong { color: var(--cream); font-weight: 500; }
-
-    main {
-      max-width: 920px;
-      margin: 0 auto;
-      padding: 56px 24px 80px;
-    }
-
-    .section-label {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 10.5px;
-      font-weight: 500;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--fern);
-      margin-bottom: 22px;
-    }
-
-    .section-label::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: linear-gradient(to right, var(--fern), transparent);
-      opacity: 0.3;
-    }
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-      gap: 14px;
-      margin-bottom: 52px;
-    }
-
-    .card {
-      background: #fff;
-      border-radius: 14px;
-      padding: 22px 20px;
-      border: 1px solid rgba(61,122,82,0.14);
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(27,58,45,0.1);
-    }
-
-    .card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--fern), var(--sage));
-      opacity: 0.55;
-    }
-
-    .card.accent::before {
-      background: linear-gradient(90deg, var(--ember), #e8924a);
-      opacity: 0.85;
-    }
-
-    .card .label {
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--text-soft);
-      margin-bottom: 10px;
-    }
-
-    .card .value {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.75rem;
-      font-weight: 700;
-      color: var(--forest);
-      line-height: 1;
-    }
-
-    .card.accent .value { color: var(--ember); }
-
-    .card .sub {
-      font-size: 12px;
-      color: var(--text-soft);
-      margin-top: 6px;
-    }
-
-    .info-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 16px;
-      margin-bottom: 52px;
-    }
-
-    .info-block {
-      background: #fff;
-      border-radius: 14px;
-      padding: 24px;
-      border: 1px solid rgba(61,122,82,0.14);
-    }
-
-    .info-block .icon {
-      font-size: 22px;
-      margin-bottom: 12px;
-      display: block;
-    }
-
-    .info-block h3 {
-      font-family: 'Playfair Display', serif;
-      font-size: 15px;
-      font-weight: 700;
-      margin-bottom: 10px;
-      color: var(--forest);
-    }
-
-    .info-block p {
-      font-size: 13.5px;
-      color: var(--text-mid);
-      line-height: 1.75;
-    }
-
-    .regions {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 52px;
-    }
-
-    .region-row {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      background: #fff;
-      border-radius: 10px;
-      padding: 14px 18px;
-      border: 1px solid rgba(61,122,82,0.12);
-      font-size: 14px;
-      transition: background 0.15s;
-    }
-
-    .region-row:hover { background: #f6faf7; }
-
-    .region-swatch {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 15px;
-    }
-
-    .region-name {
-      flex: 1;
-      color: var(--text);
-      font-weight: 500;
-    }
-
-    .region-lat {
-      color: var(--text-soft);
-      font-size: 12.5px;
-      font-weight: 300;
-    }
-
-    .download-section {
-      position: relative;
-      background: var(--forest);
-      border-radius: 16px;
-      padding: 40px 36px;
-      text-align: center;
-      color: #fff;
-      overflow: hidden;
-    }
-
-    .download-section::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(ellipse 70% 100% at 10% 50%, rgba(61,122,82,0.4) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 80% at 90% 20%, rgba(106,171,126,0.15) 0%, transparent 50%);
-      pointer-events: none;
-    }
-
-    .download-section > * { position: relative; }
-
-    .download-section h3 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.3rem;
-      font-weight: 700;
-      margin-bottom: 8px;
-      color: var(--cream);
-    }
-
-    .download-section p {
-      font-size: 13.5px;
-      color: var(--mist);
-      margin-bottom: 24px;
-      font-weight: 300;
-    }
-
-    .download-section a {
-      display: inline-block;
-      background: var(--sage);
-      color: var(--forest);
-      text-decoration: none;
-      padding: 11px 32px;
-      border-radius: 30px;
-      font-size: 13.5px;
-      font-weight: 600;
-      letter-spacing: 0.02em;
-      transition: background 0.2s, transform 0.15s;
-    }
-
-    .download-section a:hover {
-      background: var(--mist);
-      transform: scale(1.03);
-    }
-
-    footer {
-      text-align: center;
-      padding: 28px 24px;
-      font-size: 12px;
-      color: var(--text-soft);
-      border-top: 1px solid rgba(61,122,82,0.15);
-    }
-
-    footer a { color: var(--fern); text-decoration: none; }
-    footer a:hover { text-decoration: underline; }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(18px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    header .tag { animation: fadeUp 0.7s ease 0.05s both; }
-    header h1   { animation: fadeUp 0.7s ease 0.15s both; }
-    header p    { animation: fadeUp 0.7s ease 0.25s both; }
-  </style>
+@keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+header .tag { animation: fadeUp 0.7s ease 0.05s both; }
+header h1   { animation: fadeUp 0.7s ease 0.15s both; }
+header p    { animation: fadeUp 0.7s ease 0.25s both; }
+</style>
 </head>
 <body>
 
 <header>
   <div class="tag">DSC 106 — Data Visualization</div>
   <h1>CMIP6 Global<br><em>Temperature Over Time</em></h1>
-  <p>
-    Projected temperatures of Earth from 1850 to 2100, using NCAR CESM2
-    data under the SSP5-8.5 high-emissions scenario.
-  </p>
+  <p>Projected temperatures of Earth from 1850 to 2100, using NCAR CESM2 data under the SSP5-8.5 high-emissions scenario.</p>
 </header>
 
 <svg class="leaf-divider" viewBox="0 0 1440 48" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
@@ -392,6 +152,69 @@
 
 <main>
 
+  <!-- ── INTERACTIVE MAP ── -->
+  <p class="section-label">Interactive map</p>
+
+  <div class="map-wrapper">
+    <div class="map-header">
+      <h2>Surface Temperature Anomaly</h2>
+      <p>Relative to 1850–1900 pre-industrial baseline &nbsp;·&nbsp; Drag slider or press play to animate</p>
+    </div>
+    <div class="map-body">
+
+      <div class="slider-row">
+        <div class="year-display">
+          <span>Year</span>
+          <span id="year-label">1850</span>
+        </div>
+        <button class="play-btn" id="play-btn" title="Play animation">&#9654;</button>
+        <div class="slider-track">
+          <input type="range" id="year-slider" min="1850" max="2100" step="5" value="1850" />
+          <div class="slider-labels">
+            <span>1850</span><span>1900</span><span>1950</span><span>2000</span><span>2050</span><span>2100</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="map-container">
+        <div class="map-loading" id="map-loading">
+          <div class="spinner"></div>
+          Loading climate data…
+        </div>
+      </div>
+
+      <div class="legend-row">
+        <span class="legend-label">Cooler (−2°C)</span>
+        <svg id="legend-svg"></svg>
+        <span class="legend-label">Warmer (+12°C)</span>
+      </div>
+      <div style="text-align:center;margin-top:3px;">
+        <span style="font-size:10.5px;color:var(--text-soft);">Temperature anomaly (°C) relative to 1850–1900 pre-industrial baseline</span>
+      </div>
+
+      <div class="stats-bar">
+        <div class="stat-item">
+          <div class="s-label">Global Mean</div>
+          <div class="s-value" id="stat-mean">—</div>
+        </div>
+        <div class="stat-item">
+          <div class="s-label">Max Warming</div>
+          <div class="s-value warm" id="stat-max">—</div>
+        </div>
+        <div class="stat-item">
+          <div class="s-label">Min Anomaly</div>
+          <div class="s-value cool" id="stat-min">—</div>
+        </div>
+        <div class="stat-item">
+          <div class="s-label">Points above +2°C</div>
+          <div class="s-value" id="stat-above2">—</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── DATASET SUMMARY ── -->
   <p class="section-label">Dataset summary</p>
   <div class="cards">
     <div class="card">
@@ -471,5 +294,249 @@
 
 </main>
 
+<footer>
+  DSC 106 — Data Visualization &nbsp;·&nbsp; UCSD Spring 2026 &nbsp;·&nbsp;
+  Data: <a href="https://esgf-node.llnl.gov/search/cmip6/" target="_blank">CMIP6 / NCAR CESM2</a>
+</footer>
+
+<div id="map-tooltip"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+<script>
+// dataset goes 1850-2100 in 5yr steps
+// lon is stored 0-360 in the json so we convert to -180/180 for d3 later
+const DATA_URL  = 'climate_data.json';
+const WORLD_URL = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
+const TEMP_MIN  = -2;
+const TEMP_MAX  = 12; // actual max in data is ~20 but clamping at 12 looks way better visually
+const W = 900, H = 460;
+
+// flip RdBu so blue = cool, red = warm (default is reversed)
+function getColor(t) {
+  const norm = (t - TEMP_MIN) / (TEMP_MAX - TEMP_MIN);
+  return d3.interpolateRdBu(1 - Math.max(0, Math.min(1, norm)));
+}
+
+let tempData    = null;
+let selectedYear = 1850;
+let playTimer   = null;
+let isPlaying   = false;
+let myProj      = null;
+
+const slider    = document.getElementById('year-slider');
+const yearLabel = document.getElementById('year-label');
+const playBtn   = document.getElementById('play-btn');
+
+function updateSliderFill() {
+  const pct = ((+slider.value - 1850) / (2100 - 1850)) * 100;
+  slider.style.background = `linear-gradient(to right, var(--fern) 0%, var(--fern) ${pct}%, var(--sand) ${pct}%, var(--sand) 100%)`;
+}
+
+slider.addEventListener('input', () => {
+  selectedYear = +slider.value;
+  yearLabel.textContent = selectedYear;
+  updateSliderFill();
+  if (tempData) updateMap(selectedYear);
+});
+
+playBtn.addEventListener('click', () => {
+  if (isPlaying) {
+    clearInterval(playTimer);
+    isPlaying = false;
+    playBtn.innerHTML = '&#9654;';
+  } else {
+    if (selectedYear >= 2100) { selectedYear = 1850; slider.value = 1850; }
+    isPlaying = true;
+    playBtn.innerHTML = '&#9646;&#9646;';
+    // 180ms feels about right -- faster and you can't really see individual years
+    playTimer = setInterval(() => {
+      selectedYear = Math.min(selectedYear + 5, 2100);
+      slider.value = selectedYear;
+      yearLabel.textContent = selectedYear;
+      updateSliderFill();
+      if (tempData) updateMap(selectedYear);
+      if (selectedYear >= 2100) {
+        clearInterval(playTimer);
+        isPlaying = false;
+        playBtn.innerHTML = '&#9654;';
+      }
+    }, 180);
+  }
+});
+
+function initMap(world) {
+  document.getElementById('map-loading').remove();
+
+  // tried geoMercator first but the poles look huge and distorted
+  // Natural Earth is much better for showing climate data at high latitudes
+  myProj = d3.geoNaturalEarth1()
+    .scale(143)
+    .translate([W / 2, H / 2]);
+
+  const path = d3.geoPath().projection(myProj);
+
+  const svg = d3.select('#map-container')
+    .append('svg')
+    .attr('id', 'map-svg')
+    .attr('viewBox', `0 0 ${W} ${H}`)
+    .attr('preserveAspectRatio', 'xMidYMid meet');
+
+  svg.append('path')
+    .datum({type: 'Sphere'})
+    .attr('class', 'globe-sphere')
+    .attr('d', path);
+
+  svg.append('path')
+    .datum(d3.geoGraticule()())
+    .attr('class', 'graticule')
+    .attr('d', path)
+    .attr('fill', 'none')
+    .attr('stroke', 'rgba(255,255,255,0.18)')
+    .attr('stroke-width', 0.4);
+
+  // land as a base layer, dots go on top of this
+  svg.append('g')
+    .selectAll('path')
+    .data(topojson.feature(world, world.objects.countries).features)
+    .join('path')
+    .attr('d', path)
+    .attr('fill', '#ddd5c4')
+    .attr('stroke', 'none');
+
+  svg.append('g').attr('id', 'temp-layer');
+
+  svg.append('path')
+    .datum(topojson.mesh(world, world.objects.countries, (a, b) => a !== b))
+    .attr('class', 'country-borders')
+    .attr('d', path)
+    .attr('fill', 'none')
+    .attr('stroke', 'rgba(255,255,255,0.25)')
+    .attr('stroke-width', 0.35);
+
+  svg.append('path')
+    .datum(topojson.feature(world, world.objects.land))
+    .attr('class', 'land-outline')
+    .attr('d', path)
+    .attr('fill', 'none')
+    .attr('stroke', 'rgba(255,255,255,0.5)')
+    .attr('stroke-width', 0.6);
+
+  updateMap(selectedYear);
+}
+
+function updateMap(year) {
+  // json keys might be strings or numbers depending on parse, check both
+  const points = tempData[String(year)] || tempData[year] || [];
+  const tooltip = document.getElementById('map-tooltip');
+  const layer = d3.select('#temp-layer');
+  const dotSize = 4.0;
+
+  // lon in the data is 0-360 but d3 needs -180 to 180
+  function toXY(d) {
+    const lon = d[1] > 180 ? d[1] - 360 : d[1];
+    return myProj([lon, d[0]]);
+  }
+
+  layer.selectAll('circle')
+    .data(points)
+    .join(
+      enter => enter.append('circle')
+        .attr('r', dotSize)
+        .attr('opacity', 0.85)
+        .on('mousemove', function(event, d) {
+          const lon = d[1] > 180 ? d[1] - 360 : d[1];
+          const latStr = d[0] >= 0 ? `${d[0].toFixed(1)}°N` : `${Math.abs(d[0]).toFixed(1)}°S`;
+          const lonStr = lon >= 0  ? `${lon.toFixed(1)}°E`  : `${Math.abs(lon).toFixed(1)}°W`;
+          const sign   = d[2] >= 0 ? '+' : '';
+          tooltip.innerHTML = `<div class="tt-temp">${sign}${d[2].toFixed(2)}°C</div><div class="tt-pos">${latStr}, ${lonStr}</div>`;
+          tooltip.classList.add('visible');
+          tooltip.style.left = (event.clientX + 14) + 'px';
+          tooltip.style.top  = (event.clientY - 44) + 'px';
+        })
+        .on('mouseleave', () => tooltip.classList.remove('visible')),
+      update => update,
+      exit => exit.remove()
+    )
+    .attr('cx', d => { const p = toXY(d); return p ? p[0] : -999; })
+    .attr('cy', d => { const p = toXY(d); return p ? p[1] : -999; })
+    .attr('fill', d => getColor(d[2]))
+    .attr('visibility', d => toXY(d) ? 'visible' : 'hidden');
+
+  refreshStats(points);
+}
+
+function refreshStats(points) {
+  if (!points.length) return;
+  const temps = points.map(d => d[2]);
+  const mean  = temps.reduce((a, b) => a + b, 0) / temps.length;
+  const max   = Math.max(...temps);
+  const min   = Math.min(...temps);
+  // pct above 2C is basically the Paris Agreement threshold -- useful to show urgency
+  const pct   = Math.round((temps.filter(t => t > 2).length / temps.length) * 100);
+  const fmt   = v => (v >= 0 ? '+' : '') + v.toFixed(2) + '°C';
+  document.getElementById('stat-mean').textContent   = fmt(mean);
+  document.getElementById('stat-max').textContent    = fmt(max);
+  document.getElementById('stat-min').textContent    = fmt(min);
+  document.getElementById('stat-above2').textContent = pct + '%';
+}
+
+function drawLegend() {
+  const svg = d3.select('#legend-svg');
+  const lW = 380, lH = 32;  // slightly narrower so right edge doesn't clip
+  svg.attr('viewBox', `0 0 ${lW} ${lH}`).attr('preserveAspectRatio', 'xMidYMid meet');
+
+  const defs = svg.append('defs');
+  const grad = defs.append('linearGradient').attr('id', 'temp-grad');
+  for (let i = 0; i <= 40; i++) {
+    const t = TEMP_MIN + (i / 40) * (TEMP_MAX - TEMP_MIN);
+    grad.append('stop')
+      .attr('offset', (i / 40 * 100) + '%')
+      .attr('stop-color', getColor(t));
+  }
+
+  // leave 10px padding on each side so tick labels don't clip
+  const PAD = 10;
+  const barW = lW - PAD * 2;
+
+  svg.append('rect')
+    .attr('x', PAD).attr('y', 2)
+    .attr('width', barW).attr('height', 14)
+    .attr('rx', 5).attr('fill', 'url(#temp-grad)');
+
+  [-2, 0, 2, 4, 6, 8, 10, 12].forEach(t => {
+    const x = PAD + ((t - TEMP_MIN) / (TEMP_MAX - TEMP_MIN)) * barW;
+    svg.append('line')
+      .attr('x1', x).attr('y1', 16)
+      .attr('x2', x).attr('y2', 21)
+      .attr('stroke', '#6b8070').attr('stroke-width', 1);
+    svg.append('text')
+      .attr('x', x).attr('y', 30)
+      .attr('text-anchor', 'middle')
+      .attr('font-size', 8).attr('fill', '#6b8070')
+      .text(t > 0 ? '+' + t : t);
+  });
+}
+
+drawLegend();
+updateSliderFill();
+
+Promise.all([
+  d3.json(WORLD_URL),
+  d3.json(DATA_URL)
+]).then(([world, data]) => {
+  tempData = data;
+  initMap(world);
+}).catch(err => {
+  document.getElementById('map-loading').innerHTML =
+    `<span style="color:#c4622d;text-align:center;padding:20px;">
+      ⚠ Could not load data.<br>
+      Make sure <code>climate_data.json</code> is in the same repo folder as <code>index.html</code>.<br>
+      <small style="color:#6b8070;">${err.message}</small>
+    </span>`;
+  console.error('Load error:', err);
+});
+
+</script>
 </body>
 </html>
