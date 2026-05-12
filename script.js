@@ -52,6 +52,8 @@ const svg = container
 const mapLayer = svg.append("g");
 const hoverLayer = svg.append("g");
 
+let activePanel = "left";
+
 loadData();
 
 async function loadData() {
@@ -184,6 +186,15 @@ function drawHoverLayer(yearData) {
     })
     .on("mouseleave", () => {
       tooltip.classed("visible", false);
+    })
+    .on("click", (event, d) => {
+      // Pass the activePanel ("left" or "right") to the drawing function
+      showTimeSeries(d.lat, d.lon, d.region, activePanel);
+
+      updatePanelDetails(d, activePanel);
+      
+      // Toggle for the NEXT click
+      activePanel = activePanel === "left" ? "right" : "left";
     });
 }
 
@@ -248,4 +259,111 @@ function refreshStats(yearData) {
   d3.select("#stat-max").text(formatTemp(max));
   d3.select("#stat-min").text(formatTemp(min));
   d3.select("#stat-above2").text(`${above2}%`);
+}
+
+/* __ */
+
+function showTimeSeries(lat, lon, regionName, panelSide) {
+  // Filter the data
+  const locationHistory = climateData
+    .filter(d => d.lat === lat && d.lon === lon)
+    .sort((a, b) => a.year - b.year);
+
+  if (locationHistory.length === 0) return;
+
+  // Update the title of the specific panel ("left-title" or "right-title")
+  d3.select(`#${panelSide}-title`).text(regionName);
+
+  // Target the correct container and clear previous content (including placeholder)
+  const container = d3.select(`#${panelSide}-chart-container`);
+  container.selectAll("*").remove();
+
+  // Dynamically get the width of the panel so the chart fits perfectly
+  const panelWidth = container.node().getBoundingClientRect().width || 280;
+
+  // Set up chart dimensions
+  const margin = { top: 20, right: 15, bottom: 30, left: 40 };
+  const width = panelWidth - margin.left - margin.right;
+  const height = 250 - margin.top - margin.bottom;
+
+  const svg = container.append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", `translate(${margin.left},${margin.top})`);
+
+  // Set up scales
+  const x = d3.scaleLinear()
+    .domain(d3.extent(locationHistory, d => d.year))
+    .range([0, width]);
+
+  const yDomainMax = d3.max(locationHistory, d => d.temp_change);
+  const yDomainMin = Math.min(0, d3.min(locationHistory, d => d.temp_change));
+
+  const y = d3.scaleLinear()
+    .domain([yDomainMin, yDomainMax])
+    .nice()
+    .range([height, 0]);
+
+  // Add Axes
+  svg.append("g")
+    .attr("transform", `translate(0,${height})`)
+    .call(d3.axisBottom(x).tickFormat(d3.format("d")).ticks(5)); 
+
+  svg.append("g")
+    .call(d3.axisLeft(y).ticks(5).tickFormat(d => `${d}°C`));
+
+  // 0°C baseline
+  svg.append("line")
+    .attr("x1", 0)
+    .attr("x2", width)
+    .attr("y1", y(0))
+    .attr("y2", y(0))
+    .attr("stroke", "#999")
+    .attr("stroke-dasharray", "4,4");
+
+  // Draw the Line
+  const line = d3.line()
+    .x(d => x(d.year))
+    .y(d => y(d.temp_change));
+
+  svg.append("path")
+    .datum(locationHistory)
+    .attr("fill", "none")
+    .attr("stroke", panelSide === "left" ? "#08519c" : "#d40000") // Optional: differentiate line colors
+    .attr("stroke-width", 2)
+    .attr("d", line);
+    
+  // Add dots 
+  svg.selectAll(".dot")
+    .data(locationHistory)
+    .enter().append("circle")
+    .attr("class", "dot")
+    .attr("cx", d => x(d.year))
+    .attr("cy", d => y(d.temp_change))
+    .attr("r", 3)
+    .attr("fill", d => colorScale(d.temp_change));
+}
+
+function updatePanelDetails(d, panelSide) {
+  // 1. Unhide the details block
+  d3.select(`#${panelSide}-details`).classed("hidden", false);
+
+  // 2. Format the latitude and longitude nicely (e.g., "45.0°N, 120.0°W")
+  const latStr = Math.abs(d.lat).toFixed(1) + "°" + (d.lat >= 0 ? "N" : "S");
+  const lonStr = Math.abs(d.lon).toFixed(1) + "°" + (d.lon >= 0 ? "E" : "W");
+
+  // 3. Populate the HTML elements
+  d3.select(`#${panelSide}-coords`).text(`${latStr}, ${lonStr}`);
+  d3.select(`#${panelSide}-loc`).text(d.region);
+  d3.select(`#${panelSide}-year`).text(d.year);
+  d3.select(`#${panelSide}-bin`).text(getBinLabel(d.temp_change));
+  
+  // 4. Populate exact value and apply warm/cool coloring
+  const exactVal = d3.select(`#${panelSide}-val`)
+    .text(formatTemp(d.temp_change))
+    .attr("class", ""); // Reset previous classes
+
+  if (d.temp_change > 0) exactVal.classed("warm", true);
+  if (d.temp_change < 0) exactVal.classed("cool", true);
 }

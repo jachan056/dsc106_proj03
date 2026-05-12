@@ -68,16 +68,19 @@ header p {
 /* ---------- Layout ---------- */
 
 main {
-  max-width: 1280px;
+  max-width: 1600px; /* Increased from 1280px to give side panels room */
+  width: 95%; /* Added to maintain margins on smaller screens */
   margin: 0 auto;
   padding: 36px 24px 70px;
 }
 
+/* Make the dashboard a flex container */
 .dashboard {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 24px;
-  align-items: start;
+  display: flex;
+  flex-direction: row;
+  gap: 20px; 
+  align-items: stretch; 
+  width: 100%;
   margin-bottom: 64px;
 }
 
@@ -89,10 +92,21 @@ main {
   box-shadow: 0 10px 30px rgba(27, 58, 45, 0.08);
 }
 
+/* Ensure the map panel takes up the center space */
 .map-panel {
+  flex: 1; 
+  min-width: 0; 
   padding: 24px;
 }
 
+/* Styling for the new side panels */
+.side-panel {
+  width: 260px; /* Shrunk slightly to give the map more space */
+  min-width: 260px; 
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
 
 .panel-header {
   display: flex;
@@ -145,23 +159,35 @@ h2 {
 #map-container {
   position: relative;
   width: 100%;
-  min-height: 500px;
+  aspect-ratio: 960 / 500; /* Locks the aspect ratio so it scales without squishing */
   border-radius: 16px;
   overflow: hidden;
   background: #f7f7f2;
   border: 1px solid rgba(27, 58, 45, 0.12);
+  margin-bottom: 15px; /* Adds breathing room below the map */
 }
 
 .loading {
-  height: 500px;
+  position: absolute;
+  inset: 0;
   display: grid;
   place-items: center;
   color: var(--text-soft);
 }
 
-#map-svg {
+#heat-canvas {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  height: auto;
+  height: 100%;
+}
+
+#map-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
   display: block;
 }
 
@@ -291,42 +317,35 @@ h2 {
   color: #ffff8c;
 }
 
-/* ---------- Footer ---------- */
+/* ---------- Charts (Side Panels) ---------- */
 
-footer {
+.chart-container {
+  flex: 1;
+  width: 100%;
+  margin-top: 15px;
+}
+
+.placeholder {
+  color: #888;
+  font-style: italic;
+  font-size: 0.9em;
   text-align: center;
-  color: var(--text-soft);
-  font-size: 12px;
-  padding: 24px;
-  border-top: 1px solid rgba(61, 122, 82, 0.15);
+  margin-top: 50px;
 }
 
-/* ---------- Responsive ---------- */
-
-@media (max-width: 980px) {
-  .dashboard {
-    grid-template-columns: 1fr;
-  }
-
-  .side-panel {
-    position: static;
-  }
+.chart-click-info {
+  fill: #1b1b1b;
+  font-size: 14px;
+  font-weight: 700;
 }
 
-#heat-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+.current-year-point {
+  fill: #111111;
+  stroke: #ffffff;
+  stroke-width: 1.5;
 }
 
-#map-svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
+/* ---------- Miscellaneous Components ---------- */
 
 .meta-bar {
   display: flex;
@@ -464,14 +483,60 @@ footer {
   height: 32px;
 }
 
-.chart-click-info {
-  fill: #1b1b1b;
-  font-size: 14px;
-  font-weight: 700;
+/* ---------- Footer ---------- */
+
+footer {
+  text-align: center;
+  color: var(--text-soft);
+  font-size: 12px;
+  padding: 24px;
+  border-top: 1px solid rgba(61, 122, 82, 0.15);
 }
 
-.current-year-point {
-  fill: #111111;
-  stroke: #ffffff;
-  stroke-width: 1.5;
+/* ---------- Responsive ---------- */
+
+@media (max-width: 1080px) {
+  .dashboard {
+    flex-direction: column; /* Stack vertically on smaller screens */
+  }
+
+  .side-panel {
+    width: 100%;
+    min-width: unset;
+  }
 }
+
+/* Panel (side) */
+/* ---------- Panel Details ---------- */
+.panel-details {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(61, 122, 82, 0.15); /* Matches your existing borders */
+  font-size: 13px;
+}
+
+.panel-details.hidden {
+  display: none;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.detail-row span {
+  color: var(--text-soft);
+}
+
+.detail-row strong {
+  color: var(--forest);
+  font-weight: 600;
+  text-align: right;
+  max-width: 60%;
+}
+
+/* Optional: Color-code the exact value based on warm/cool */
+.detail-row strong.warm { color: #b30000; }
+.detail-row strong.cool { color: #08519c; }

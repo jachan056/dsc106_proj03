@@ -32,12 +32,32 @@
 
   <main>
     <section class="dashboard">
+      
+      <!-- 🟢 NEW: Left Comparison Panel -->
+      <div id="left-panel" class="side-panel hidden-start">
+        <h3 id="left-title">Location 1</h3>
+        <div id="left-chart-container" class="chart-container">
+          <p class="placeholder">Click the map to select the first location.</p>
+        </div>
+      
+
+      <div id="left-details" class="panel-details hidden">
+          <div class="detail-row"><span>Lat, Long:</span> <strong id="left-coords">—</strong></div>
+          <div class="detail-row"><span>Location:</span> <strong id="left-loc">—</strong></div>
+          <div class="detail-row"><span>Year:</span> <strong id="left-year">—</strong></div>
+          <div class="detail-row"><span>Temp Bin:</span> <strong id="left-bin">—</strong></div>
+          <div class="detail-row"><span>Exact Value:</span> <strong id="left-val">—</strong></div>
+        </div>
+      </div>
+      </div>
+
+      <!-- 🟡 EXISTING: Center Map Panel -->
       <div class="map-panel">
         <div class="panel-header">
           <div>
             <p class="section-label">Main view</p>
             <h2>World Heat Map</h2>
-            <p>Move the year slider to update the heat map, hover for details, and use the slider to compare years.</p>
+            <p>Move the year slider to update the heat map, hover for details, and click points to compare regions.</p>
           </div>
 
           <div class="year-box">
@@ -101,6 +121,24 @@
             <div class="s-value" id="stat-above2">—</div>
           </div>
         </div>
+      </div>
+
+      <!-- 🟢 NEW: Right Comparison Panel -->
+      <div id="right-panel" class="side-panel hidden-start">
+        <h3 id="right-title">Location 2</h3>
+        <div id="right-chart-container" class="chart-container">
+          <p class="placeholder">Click the map to select the second location.</p>
+        </div>
+      
+
+      <div id="right-details" class="panel-details hidden">
+          <div class="detail-row"><span>Lat, Long:</span> <strong id="right-coords">—</strong></div>
+          <div class="detail-row"><span>Location:</span> <strong id="right-loc">—</strong></div>
+          <div class="detail-row"><span>Year:</span> <strong id="right-year">—</strong></div>
+          <div class="detail-row"><span>Temp Bin:</span> <strong id="right-bin">—</strong></div>
+          <div class="detail-row"><span>Exact Value:</span> <strong id="right-val">—</strong></div>
+        </div>
+      </div>
       </div>
 
     </section>
