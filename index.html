@@ -33,31 +33,13 @@
   <main>
     <section class="dashboard">
       
-      <!-- 🟢 NEW: Left Comparison Panel -->
-      <div id="left-panel" class="side-panel hidden-start">
-        <h3 id="left-title">Location 1</h3>
-        <div id="left-chart-container" class="chart-container">
-          <p class="placeholder">Click the map to select the first location.</p>
-        </div>
-      
-
-      <div id="left-details" class="panel-details hidden">
-          <div class="detail-row"><span>Lat, Long:</span> <strong id="left-coords">—</strong></div>
-          <div class="detail-row"><span>Location:</span> <strong id="left-loc">—</strong></div>
-          <div class="detail-row"><span>Year:</span> <strong id="left-year">—</strong></div>
-          <div class="detail-row"><span>Temp Bin:</span> <strong id="left-bin">—</strong></div>
-          <div class="detail-row"><span>Exact Value:</span> <strong id="left-val">—</strong></div>
-        </div>
-      </div>
-      </div>
-
       <!-- 🟡 EXISTING: Center Map Panel -->
       <div class="map-panel">
         <div class="panel-header">
           <div>
             <p class="section-label">Main view</p>
             <h2>World Heat Map</h2>
-            <p>Move the year slider to update the heat map, hover for details, and click points to compare regions.</p>
+            <p>Move the year slider for the timeline, use the temperature slider to filter, or return to the summary view to show all points at once. Hover for details and click points to compare regions.</p>
           </div>
 
           <div class="year-box">
@@ -70,34 +52,87 @@
           <div class="loading">Loading climate data...</div>
         </div>
 
-        <div class="slider-row">
-          <span>1850</span>
-          <input
-            id="year-slider"
-            type="range"
-            min="1850"
-            max="2100"
-            step="5"
-            value="1850"
-          />
-          <span>2100</span>
-        </div>
-
-        <div class="slider-years">
-          <span>1850</span>
-          <span>1900</span>
-          <span>1950</span>
-          <span>2000</span>
-          <span>2050</span>
-          <span>2100</span>
-        </div>
-
-        <button class="play-btn" id="play-btn">▶ Play</button>
-
-        <div class="legend">
-          <span>Cooling</span>
+        <div class="legend legend-with-play">
+          <button class="play-btn" id="play-btn" type="button">▶ Play</button>
+          <span>≤ -4°C</span>
           <div class="legend-gradient"></div>
-          <span>Warming</span>
+          <span>≥ +5°C</span>
+        </div>
+
+        <div class="slider-block">
+          <div class="slider-label-row">
+            <strong>Year</strong>
+          </div>
+          <div class="slider-row">
+            <span>1850</span>
+            <input
+              id="year-slider"
+              type="range"
+              min="1850"
+              max="2100"
+              step="5"
+              value="1850"
+            />
+            <span>2100</span>
+          </div>
+
+          <div class="slider-years">
+            <span>1850</span>
+            <span>1900</span>
+            <span>1950</span>
+            <span>2000</span>
+            <span>2050</span>
+            <span>2100</span>
+          </div>
+        </div>
+
+        <div class="slider-block temperature-slider-block">
+          <div class="slider-label-row temp-title-row">
+            <strong>Temperature filter</strong>
+            <span class="temp-filter-pill"><span id="temp-filter-label">0.00°C ± 0.25°C</span></span>
+          </div>
+          <div class="view-mode-row">
+            <span id="view-mode-label">Summary view: all points shown</span>
+            <button class="summary-btn active" id="summary-btn" type="button">Show Summary View</button>
+          </div>
+          <div class="slider-row">
+            <span id="temp-min-label">≤ -4°C</span>
+            <input
+              id="temp-slider"
+              type="range"
+              min="-4"
+              max="5"
+              step="0.25"
+              value="0"
+              list="temp-ticks"
+            />
+            <span id="temp-max-label">≥ +5°C</span>
+            <datalist id="temp-ticks">
+              <option value="-4"></option>
+              <option value="-3.5"></option>
+              <option value="-3"></option>
+              <option value="-2.5"></option>
+              <option value="-2"></option>
+              <option value="-1.5"></option>
+              <option value="-1"></option>
+              <option value="-0.5"></option>
+              <option value="0"></option>
+              <option value="0.5"></option>
+              <option value="1"></option>
+              <option value="1.5"></option>
+              <option value="2"></option>
+              <option value="2.5"></option>
+              <option value="3"></option>
+              <option value="3.5"></option>
+              <option value="4"></option>
+              <option value="4.5"></option>
+              <option value="5"></option>
+            </datalist>
+          </div>
+
+          <div class="temp-slider-ticks" aria-hidden="true">
+            <span>≤ -4</span><span>-3.5</span><span>-3</span><span>-2.5</span><span>-2</span><span>-1.5</span><span>-1</span><span>-0.5</span><span>0</span><span>0.5</span><span>1</span><span>1.5</span><span>2</span><span>2.5</span><span>3</span><span>3.5</span><span>4</span><span>4.5</span><span>≥ 5</span>
+          </div>
         </div>
 
         <div class="stats-bar">
@@ -115,16 +150,26 @@
             <div class="s-label">Min Anomaly</div>
             <div class="s-value cool" id="stat-min">—</div>
           </div>
-
-          <div class="stat-item">
-            <div class="s-label">Points above +2°C</div>
-            <div class="s-value" id="stat-above2">—</div>
-          </div>
         </div>
       </div>
 
-      <!-- 🟢 NEW: Right Comparison Panel -->
-      <div id="right-panel" class="side-panel hidden-start">
+      <!-- 🟢 Right Stacked Comparison Panels -->
+      <div class="comparison-column">
+      <div id="left-panel" class="side-panel">
+        <h3 id="left-title">Location 1</h3>
+        <div id="left-chart-container" class="chart-container">
+          <p class="placeholder">Click the map to select the first location.</p>
+        </div>
+      
+
+      <div id="left-details" class="panel-details hidden">
+          <div class="detail-row"><span>Lat, Long:</span> <strong id="left-coords">—</strong></div>
+          <div class="detail-row"><span>Point Year:</span> <strong id="left-year">—</strong></div>
+          <div class="detail-row"><span>Point Value:</span> <strong id="left-val">—</strong></div>
+        </div>
+      </div>
+
+      <div id="right-panel" class="side-panel">
         <h3 id="right-title">Location 2</h3>
         <div id="right-chart-container" class="chart-container">
           <p class="placeholder">Click the map to select the second location.</p>
@@ -133,12 +178,11 @@
 
       <div id="right-details" class="panel-details hidden">
           <div class="detail-row"><span>Lat, Long:</span> <strong id="right-coords">—</strong></div>
-          <div class="detail-row"><span>Location:</span> <strong id="right-loc">—</strong></div>
-          <div class="detail-row"><span>Year:</span> <strong id="right-year">—</strong></div>
-          <div class="detail-row"><span>Temp Bin:</span> <strong id="right-bin">—</strong></div>
-          <div class="detail-row"><span>Exact Value:</span> <strong id="right-val">—</strong></div>
+          <div class="detail-row"><span>Point Year:</span> <strong id="right-year">—</strong></div>
+          <div class="detail-row"><span>Point Value:</span> <strong id="right-val">—</strong></div>
         </div>
       </div>
+
       </div>
 
     </section>
