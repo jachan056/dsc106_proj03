@@ -48,18 +48,7 @@
           </div>
         </div>
 
-        <div id="map-container">
-          <div class="loading">Loading climate data...</div>
-        </div>
-
-        <div class="legend legend-with-play">
-          <button class="play-btn" id="play-btn" type="button">▶ Play</button>
-          <span>≤ -4°C</span>
-          <div class="legend-gradient"></div>
-          <span>≥ +5°C</span>
-        </div>
-
-        <div class="slider-block">
+        <div class="slider-block year-slider-block">
           <div class="slider-label-row">
             <strong>Year</strong>
           </div>
@@ -84,6 +73,21 @@
             <span>2050</span>
             <span>2100</span>
           </div>
+        </div>
+
+        <div class="map-control-row">
+          <button class="play-btn" id="play-btn" type="button">▶ Play</button>
+          <div id="zoom-controls-row" class="map-zoom-controls" aria-label="Map zoom controls"></div>
+        </div>
+
+        <div id="map-container">
+          <div class="loading">Loading climate data...</div>
+        </div>
+
+        <div class="legend legend-with-play">
+          <span>≤ -4°C</span>
+          <div class="legend-gradient"></div>
+          <span>≥ +5°C</span>
         </div>
 
         <div class="slider-block temperature-slider-block">

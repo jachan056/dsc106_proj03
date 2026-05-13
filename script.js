@@ -86,27 +86,34 @@ function setupMapZoom() {
 }
 
 function addZoomButtons() {
-  const mapPanel = d3.select(".map-panel");
-  if (!mapPanel.select(".map-zoom-controls").empty()) return;
+  const controls = d3.select("#zoom-controls-row");
+  if (controls.empty() || !controls.select("button").empty()) return;
 
-  const controls = mapPanel
-    .insert("div", "#map-container")
-    .attr("class", "map-zoom-controls")
-    .on("click", event => event.stopPropagation());
+  controls
+    .on("click", event => event.stopPropagation())
+    .on("pointerdown", event => event.stopPropagation())
+    .on("pointermove", event => event.stopPropagation())
+    .on("pointerup", event => event.stopPropagation());
 
   controls
     .append("button")
     .attr("type", "button")
     .attr("aria-label", "Zoom in")
     .text("+")
-    .on("click", () => zoomByButton(1.35));
+    .on("click", event => {
+      event.stopPropagation();
+      zoomByButton(1.35);
+    });
 
   controls
     .append("button")
     .attr("type", "button")
     .attr("aria-label", "Zoom out")
     .text("−")
-    .on("click", () => zoomByButton(1 / 1.35));
+    .on("click", event => {
+      event.stopPropagation();
+      zoomByButton(1 / 1.35);
+    });
 
   controls
     .append("button")
@@ -114,7 +121,10 @@ function addZoomButtons() {
     .attr("aria-label", "Reset zoom")
     .attr("class", "reset-zoom-btn")
     .text("Reset")
-    .on("click", resetMapZoom);
+    .on("click", event => {
+      event.stopPropagation();
+      resetMapZoom();
+    });
 }
 
 function zoomByButton(factor) {
