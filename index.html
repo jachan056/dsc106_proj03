@@ -196,15 +196,9 @@
 
       <div class="cards">
         <div class="card">
-          <div class="label">Year range</div>
-          <div class="value">1850–2100</div>
-          <div class="sub">Historical + future projection</div>
-        </div>
-
-        <div class="card">
-          <div class="label">Sampling interval</div>
-          <div class="value">5 yrs</div>
-          <div class="sub">Every 5th year sampled</div>
+          <div class="label">Dataset and Model</div>
+          <div class="value">CMIP6</div>
+          <div class="sub">CESM2 Climate Simulation Model</div>
         </div>
 
         <div class="card accent">
@@ -215,8 +209,13 @@
 
         <div class="card accent">
           <div class="label">Baseline period</div>
-          <div class="value">1850–1900</div>
+          <div class="value">1850–1900 Average</div>
           <div class="sub">Pre-industrial reference</div>
+        </div>
+
+        <div class="card">
+          <div class="label">Data Transformation</div>
+          <div class="value">Yearly averages every 5-year and spatial sampling</div>
         </div>
       </div>
     </section>
@@ -298,10 +297,54 @@
         </div>
       </div>
     </section>
+
+<section>
+  <p class="section-label">Design rationale</p>
+
+  <div class="info-block long-text-section">
+    <h3>Visualization Design Decisions</h3>
+
+    <p>
+      The visualization was designed to help users explore how global temperature change varies across both space and time. A world map was chosen as the primary visual encoding because climate change is inherently geographic, and the spatial layout allows users to quickly compare warming patterns across regions. Temperature anomalies were encoded using a blue–white–red color scale, where blue represents cooling and red represents warming, because this diverging color scheme intuitively communicates temperature differences and emphasizes extreme warming.
+    </p>
+
+    <p>
+      Interactive components were added to support deeper exploration of the dataset. A year slider allows users to observe how warming changes over time, while the play button animates temporal progression to highlight long-term trends. A temperature filter slider was included so users can focus on locations within a selected warming range. Clicking on map locations generates side-by-side time series charts that enable comparison between two regions over time. These interaction techniques were chosen to support both overview and detailed analysis within a single interface.
+    </p>
+
+    <p>
+      Several alternative designs were considered during development. A choropleth map was initially explored, but it reduced spatial precision because the dataset represents gridded climate points rather than country-level values. Different layouts for the comparison charts were tested, including placing both charts horizontally, but the final stacked vertical layout improved readability and reduced visual crowding.
+    </p>
+  </div>
+</section>
+
+<section>
+  <p class="section-label">Development process</p>
+
+  <div class="info-block long-text-section">
+    <h3>Team Workflow and Development</h3>
+
+    <p>
+      The application was developed through an iterative process involving data preprocessing, interface design, interaction development, and refinement of the visualization layout.
+    </p>
+
+    <p>
+      To ensure the project remained organized, we divided the workload by data processing tasks and specific interaction tools. Alisha focused on preprocessing and the temperature filter while ensuring all components worked together. Ja-Chan handled the finalization of the dataset, the website's structure, and the dataset information part of the website. Amey managed the main map and year slider, while Sujal focused on the tooltips and side charts.
+    </p>
+
+    <p>
+      Overall, the project took approximately 60 person-hours to complete. The most time-consuming aspects involved identifying the most effective design for the main map to ensure information was conveyed successfully, as well as ensuring that all interactions worked together without breaking.
+    </p>
+  </div>
+</section>
+    
+
   </main>
 
   <div id="tooltip"></div>
 
+
+  
   <footer>
     Data source: CMIP6 / NCAR CESM2 · Visualization created for DSC 106
   </footer>

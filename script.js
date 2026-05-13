@@ -114,17 +114,6 @@ function addZoomButtons() {
       event.stopPropagation();
       zoomByButton(1 / 1.35);
     });
-
-  controls
-    .append("button")
-    .attr("type", "button")
-    .attr("aria-label", "Reset zoom")
-    .attr("class", "reset-zoom-btn")
-    .text("Reset")
-    .on("click", event => {
-      event.stopPropagation();
-      resetMapZoom();
-    });
 }
 
 function zoomByButton(factor) {
@@ -733,14 +722,40 @@ function formatCoords(lat, lon) {
 }
 
 function setupResetClick() {
-  d3.select("#map-container").on("click", event => event.stopPropagation());
+  // Keep clicks inside the side panels from resetting selections.
   d3.selectAll(".side-panel").on("click", event => event.stopPropagation());
 
-  d3.select(document.body).on("click", () => {
+  // Keep map clicks from bubbling to the page reset handler.
+  d3.select("#map-container").on("click", event => event.stopPropagation());
+
+  // IMPORTANT:
+  // Use native addEventListener here instead of d3.on(...), because d3.on("click")
+  // would replace existing handlers like the Play button and slider input handlers.
+  const noResetSelectors = [
+    "#year-slider",
+    "#temp-slider",
+    ".slider-block",
+    ".map-control-row",
+    "#play-btn",
+    "#zoom-controls-row",
+    "#summary-btn"
+  ];
+
+  document.querySelectorAll(noResetSelectors.join(", ")).forEach(element => {
+    ["click", "mousedown", "mouseup", "pointerdown", "pointerup", "touchstart", "touchend"].forEach(type => {
+      element.addEventListener(type, event => {
+        event.stopPropagation();
+      });
+    });
+  });
+
+  d3.select(document.body).on("click", event => {
+    const clickedControl = event.target.closest(noResetSelectors.join(", "));
+    if (clickedControl) return;
+
     resetSelections();
   });
 }
-
 function resetSelections() {
   panelSelections.left = null;
   panelSelections.right = null;
