@@ -778,3 +778,19 @@ footer {
     align-self: flex-end;
   }
 }
+
+/* Bigger title for year slider */
+.year-slider-block .slider-label-row strong {
+  font-size: 20px;
+}
+
+/* Bigger title for temperature slider */
+.temp-title-row strong {
+  font-size: 20px;
+}
+
+/* Bigger "Summary view: all points shown" text */
+#view-mode-label {
+  font-size: 16px;
+  font-weight: 700;
+}
